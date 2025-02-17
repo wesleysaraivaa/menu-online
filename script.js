@@ -156,17 +156,17 @@ checkoutBtn.addEventListener("click", function () {
   //enviar pedido para api wpp
   const cartItems = cart
     .map((item) => {
-      return `Qtd: (${item.quantity}), ${item.name}, Preco: R$: ${item.price} |`;
+      return `Qtd: ${item.quantity} - ${item.name} |  Preço: R$ ${item.price}`;
     })
     .join("\n");
 
-  const message = encodeURIComponent(cartItems);
+  const address = addressInput.value
+    ? `\n\nEndereco: ${addressInput.value}`
+    : "";
+  const message = encodeURIComponent(`${cartItems}${address}`);
   const phone = "+5588997130026";
 
-  window.open(
-    `https://wa.me/${phone}?text=${message} Endereco: ${addressInput.value}`,
-    "_blank"
-  );
+  window.open(`https://wa.me/${phone}?text=${message} `, "_blank");
 
   cart.length = 0;
   updateCartModal();
