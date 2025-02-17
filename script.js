@@ -1,5 +1,3 @@
-
-
 const menu = document.getElementById("menu");
 const cartbtn = document.getElementById("cart-btn");
 const cartModal = document.getElementById("cart-modal");
@@ -14,167 +12,179 @@ const addressWarn = document.getElementById("address-warn");
 let cart = [];
 
 cartbtn.addEventListener("click", function () {
-    cartModal.style.display = "flex"
-})
+  cartModal.style.display = "flex";
+});
 
 closeModalBtn.addEventListener("click", function () {
-    cartModal.style.display = "none"
-})
+  cartModal.style.display = "none";
+});
 cartModal.addEventListener("click", function (event) {
-    if (event.target === cartModal) {
-        cartModal.style.display = "none"
-    }
-})
+  if (event.target === cartModal) {
+    cartModal.style.display = "none";
+  }
+});
 
 menu.addEventListener("click", function (event) {
-    let parentButton = event.target.closest(".add-to-cart-btn")
+  let parentButton = event.target.closest(".add-to-cart-btn");
 
-    if (parentButton) {
-        const name = parentButton.getAttribute("data-name")
-        const price = parseFloat(parentButton.getAttribute("data-price"))
+  if (parentButton) {
+    const name = parentButton.getAttribute("data-name");
+    const price = parseFloat(parentButton.getAttribute("data-price"));
 
-        addToCart(name, price)
-
-    }
-})
+    addToCart(name, price);
+  }
+});
 
 function addToCart(name, price) {
-    const existingItem = cart.find(item => item.name === name)
+  const existingItem = cart.find((item) => item.name === name);
 
-    if (existingItem) {
-        existingItem.quantity += 1;
-    } else {
-        cart.push({
-            name,
-            price,
-            quantity: 1,
-        })
-    }
+  if (existingItem) {
+    existingItem.quantity += 1;
+  } else {
+    cart.push({
+      name,
+      price,
+      quantity: 1,
+    });
+  }
 
-    updateCartModal()
+  updateCartModal();
 }
 
 function updateCartModal() {
-    cartItemsContainer.innerHTML = "";
-    let total = 0;
+  cartItemsContainer.innerHTML = "";
+  let total = 0;
 
-    cart.forEach(item => {
-        const cartItemContainer = document.createElement("div");
-        cartItemContainer.classList.add("flex", "justify-between", "mb-4", "flex-col")
+  cart.forEach((item) => {
+    const cartItemContainer = document.createElement("div");
+    cartItemContainer.classList.add(
+      "flex",
+      "justify-between",
+      "mb-4",
+      "flex-col"
+    );
 
-        cartItemContainer.innerHTML = `
+    cartItemContainer.innerHTML = `
             <div class=" flex items-center justify-between">
                 <div>
                     <p class="font-medium"> ${item.name} </p>
                     <p> Qtd: ${item.quantity} </p>
-                    <p class="font-medium mt-2"> R$: ${item.price.toFixed(2)} </p>
+                    <p class="font-medium mt-2"> R$: ${item.price.toFixed(
+                      2
+                    )} </p>
                 </div>
                 <div>
-                    <button class="remove-from-cart-btn" data-name="${item.name}"> Remover </button>
+                    <button class="remove-from-cart-btn" data-name="${
+                      item.name
+                    }"> Remover </button>
                 </div>
             </div>
-        `
+        `;
 
-        total += item.price * item.quantity;
+    total += item.price * item.quantity;
 
-        cartItemsContainer.appendChild(cartItemContainer)
-    })
+    cartItemsContainer.appendChild(cartItemContainer);
+  });
 
-    cartTotal.textContent = total.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+  cartTotal.textContent = total.toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  });
 
-    cartCount.innerHTML = cart.length;
+  cartCount.innerHTML = cart.length;
 }
 
 cartItemsContainer.addEventListener("click", function (event) {
-    if (event.target.classList.contains("remove-from-cart-btn")) {
-        const name = event.target.getAttribute("data-name")
+  if (event.target.classList.contains("remove-from-cart-btn")) {
+    const name = event.target.getAttribute("data-name");
 
-        removeItemCart(name);
-    }
-})
+    removeItemCart(name);
+  }
+});
 
 function removeItemCart(name) {
-    const index = cart.findIndex(item => item.name === name);
+  const index = cart.findIndex((item) => item.name === name);
 
-    if (index !== -1) {
-        const item = cart[index];
+  if (index !== -1) {
+    const item = cart[index];
 
-        if (item.quantity > 1) {
-            item.quantity -= 1;
-            updateCartModal();
-            return;
-        }
-
-        cart.splice(index, 1);
-        updateCartModal();
+    if (item.quantity > 1) {
+      item.quantity -= 1;
+      updateCartModal();
+      return;
     }
+
+    cart.splice(index, 1);
+    updateCartModal();
+  }
 }
 
 // Evento de monitoracao do input
 addressInput.addEventListener("input", function (event) {
-    let inputValue = event.target.value;
+  let inputValue = event.target.value;
 
-    if (inputValue !== "") {
-        addressInput.classList.remove("border-red-500")
-        addressWarn.classList.add("hidden")
-    }
-})
+  if (inputValue !== "") {
+    addressInput.classList.remove("border-red-500");
+    addressWarn.classList.add("hidden");
+  }
+});
 
 checkoutBtn.addEventListener("click", function () {
+  const isOpen = checkOpen();
+  if (!isOpen) {
+    Toastify({
+      text: "NO MOMENTO ESTAMSO FECHADOS!",
+      duration: 3000,
+      close: true,
+      gravity: "top", // `top` or `bottom`
+      position: "left", // `left`, `center` or `right`
+      stopOnFocus: true, // Prevents dismissing of toast on hover
+      style: {
+        background: "linear-gradient(to right, #00b09b, #96c93d)",
+      },
+    }).showToast();
+    return;
+  }
 
-    const isOpen = checkOpen();
-    if (!isOpen) {
-        Toastify({
-            text: "NO MOMENTO ESTAMSO FECHADOS!",
-            duration: 3000,
-            close: true,
-            gravity: "top", // `top` or `bottom`
-            position: "left", // `left`, `center` or `right`
-            stopOnFocus: true, // Prevents dismissing of toast on hover
-            style: {
-                background: "linear-gradient(to right, #00b09b, #96c93d)",
-            },
-        }).showToast();
-        return;
-    }
+  if (cart.length === 0) return;
+  if (addressInput.value == "") {
+    addressWarn.classList.remove("hidden");
+    addressInput.classList.add("border-red-500");
+    return;
+  }
 
-    if (cart.length === 0) return;
-    if (addressInput.value == "") {
-        addressWarn.classList.remove("hidden")
-        addressInput.classList.add("border-red-500")
-        return;
-    }
+  //enviar pedido para api wpp
+  const cartItems = cart
+    .map((item) => {
+      return `Qtd: (${item.quantity}), ${item.name}, Preco: R$: ${item.price} |`;
+    })
+    .join("\n");
 
-    //enviar pedido para api wpp
-    const cartItems = cart.map((item) => {
-        return (
-            ` ${item.name}, Quantidade: (${item.quantity}), Preco: R$: ${item.price} //`
-        )
-    }).join("")
+  const message = encodeURIComponent(cartItems);
+  const phone = "+5588997130026";
 
-    const message = encodeURIComponent(cartItems)
-    const phone = "88997130026"
+  window.open(
+    `https://wa.me/${phone}?text=${message} Endereco: ${addressInput.value}`,
+    "_blank"
+  );
 
-    window.open(`https://wa.me/${phone}?text=${message} Endereco: ${addressInput.value}`, "_blank")
-
-    cart.length = 0;
-    updateCartModal();
-
-})
+  cart.length = 0;
+  updateCartModal();
+});
 
 function checkOpen() {
-    const data = new Date()
-    const hora = data.getHours()
-    return hora >= 18 && hora < 22;//true rest. est aberto
+  const data = new Date();
+  const hora = data.getHours();
+  return hora >= 18 && hora < 22; //true rest. est aberto
 }
 
-const spanItem = document.getElementById("date-span")
-const isOpen = checkOpen()
+const spanItem = document.getElementById("date-span");
+const isOpen = checkOpen();
 
 if (isOpen) {
-    spanItem.classList.remove("bg-red-500")
-    spanItem.classList.add("bg-green-600")
+  spanItem.classList.remove("bg-red-500");
+  spanItem.classList.add("bg-green-600");
 } else {
-    spanItem.classList.remove("bg-green-600")
-    spanItem.classList.add("bg-red-500")
+  spanItem.classList.remove("bg-green-600");
+  spanItem.classList.add("bg-red-500");
 }
