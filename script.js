@@ -136,9 +136,9 @@ checkoutBtn.addEventListener("click", function () {
       text: "NO MOMENTO ESTAMSO FECHADOS!",
       duration: 3000,
       close: true,
-      gravity: "top", // `top` or `bottom`
-      position: "left", // `left`, `center` or `right`
-      stopOnFocus: true, // Prevents dismissing of toast on hover
+      gravity: "top",
+      position: "left",
+      stopOnFocus: true,
       style: {
         background: "linear-gradient(to right, #00b09b, #96c93d)",
       },
@@ -160,10 +160,16 @@ checkoutBtn.addEventListener("click", function () {
     })
     .join("\n");
 
+  const totalCartValue = cart.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0
+  );
+  const totalmsg = `\n\nTotal: R$ ${totalCartValue.toFixed(2)}`;
+
   const address = addressInput.value
     ? `\n\nEndereco: ${addressInput.value}`
     : "";
-  const message = encodeURIComponent(`${cartItems}${address}`);
+  const message = encodeURIComponent(`${cartItems}${address}${totalmsg}`);
   const phone = "+5588997130026";
 
   window.open(`https://wa.me/${phone}?text=${message} `, "_blank");
@@ -175,7 +181,7 @@ checkoutBtn.addEventListener("click", function () {
 function checkOpen() {
   const data = new Date();
   const hora = data.getHours();
-  return hora >= 18 && hora < 22; //true rest. est aberto
+  return hora >= 18 && hora < 23;
 }
 
 const spanItem = document.getElementById("date-span");
